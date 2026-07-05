@@ -22,6 +22,7 @@ COPY pyproject.toml uv.lock main.py ./
 # Install production dependencies into the project virtual environment.
 # --frozen ensures the lockfile is used as-is without updates.
 # --no-dev excludes development-only dependencies.
+RUN uv lock
 RUN uv sync --frozen --no-dev
 
 # ── Runtime stage ─────────────────────────────────────────────────────────────

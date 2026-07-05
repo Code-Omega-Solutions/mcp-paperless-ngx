@@ -1,0 +1,16 @@
+[project]
+name = "mcp-paperless-ngx"
+version = "1.0.0"
+description = "MCP server for Paperless-ngx using the streamable HTTP transport protocol."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.28.1",
+]
+
+[project.scripts]
+paperless-mcp = "main:main"
+
+[tool.uv]
+package = true

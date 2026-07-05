@@ -1,0 +1,156 @@
+# paperless-mcp
+
+MCP server for [Paperless-ngx](https://docs.paperless-ngx.com/) using the **streamable HTTP** transport protocol.
+
+## Features
+
+### Resources
+| URI | Description |
+|---|---|
+| `paperless://openapi` | Full OpenAPI spec for the Paperless-ngx REST API |
+| `paperless://server` | Configured server base URL |
+| `paperless://token` | API auth token |
+
+### Tools (read-only)
+- `list_documents` — list documents with filters (tag, correspondent, document type, full-text query)
+- `get_document` — retrieve a single document with all metadata
+- `get_document_content` — retrieve extracted text content of a document
+- `get_document_suggestions` — AI-generated metadata suggestions for a document
+- `list_tags` — list all tags
+- `list_correspondents` — list all correspondents
+- `list_document_types` — list all document types
+- `list_workflows` — list all sorting workflows
+- `list_workflow_triggers` — list all workflow triggers
+- `list_workflow_actions` — list all workflow actions
+
+### Tools (write — metadata and workflow creation)
+- `create_tag` — create a new tag
+- `create_correspondent` — create a new correspondent
+- `create_document_type` — create a new document type
+- `create_workflow_trigger` — create a workflow trigger (conditions)
+- `create_workflow_action` — create a workflow action (assignments)
+- `create_workflow` — create a complete workflow linking triggers and actions
+
+### Prompts
+- `get_inbox_documents` — formatted overview of all inbox documents
+- `get_document_data_for_rule_creation(document_id)` — detailed document data to help design a sorting rule
+- `create_sorting_rule(document_id?)` — guided walkthrough for creating a sorting workflow
+
+## Configuration
+
+Create `~/.config/paperless-mcp/config.toml`:
+
+```toml
+[paperless]
+server_url = "http://your-paperless-server:8000"
+token = "your-api-token"
+inbox_tag_id = 1  # ID of the tag used for the inbox view
+```
+
+Override the config path with the `PAPERLESS_MCP_CONFIG` environment variable.
+
+## Running
+
+```bash
+# Install dependencies
+uv sync
+
+# Start the server (listens on 0.0.0.0:8000/mcp)
+uv run paperless-mcp
+```
+
+The MCP endpoint is available at `http://localhost:8000/mcp` (streamable HTTP).
+
+## Docker
+
+### Quick start
+
+```bash
+# Pull and run (replace values in the environment or mount a config file)
+docker run -d \
+  --name paperless-mcp \
+  -p 8000:8000 \
+  -v ./config:/config:ro \
+  ghcr.io/pgfeller/paperless-mcp:latest
+```
+
+Create `./config/config.toml` before starting (see [Configuration](#configuration) above).
+
+### docker-compose
+
+```bash
+# 1. Create the config directory and file
+mkdir config
+cat > config/config.toml <<'EOF'
+[paperless]
+server_url = "http://your-paperless-server:8000"
+token = "your-api-token"
+inbox_tag_id = 1
+EOF
+
+# 2. Start the service
+docker compose up -d
+
+# 3. Check it is healthy
+docker compose ps
+```
+
+The `docker-compose.yml` in this repository mounts `./config` as read-only and
+includes a health check that verifies the server is accepting TCP connections on
+port 8000.
+
+### Building locally
+
+```bash
+docker build -t paperless-mcp .
+docker run -d -p 8000:8000 -v ./config:/config:ro paperless-mcp
+```
+
+### Published image
+
+Pre-built images for `linux/amd64` and `linux/arm64` are available at:
+
+```
+ghcr.io/pgfeller/paperless-mcp:latest
+```
+
+Tags follow [Semantic Versioning](https://semver.org/) — `v1.2.3`, `1.2`, `latest`.
+
+---
+
+## Getting an API token
+
+In Paperless-ngx, go to **Settings → Profile** and generate an API token, or use:
+
+```bash
+curl -X POST http://your-server/api/token/ \
+  -d '{"username": "your-user", "password": "your-password"}' \
+  -H "Content-Type: application/json"
+```
+
+## Connecting from Open WebUI
+
+To use this MCP server with Open WebUI:
+
+1. Open **Settings** → **Functions**
+2. Click **"+"** to add a new function
+3. Configure the MCP connection:
+   - **Name**: Paperless Assistant (or your preferred name)
+   - **Type**: MCP
+   - **URL**: `http://host.docker.internal:8000/mcp`
+     - If Open WebUI runs in Docker on the same host as paperless-mcp, use `host.docker.internal`
+     - If running on different hosts, replace with the actual hostname/IP
+     - **Critical**: The port (`:8000`) and `/mcp` path are required
+   - **Auth**: **None** ⚠️
+     - Do NOT use "Bearer" — the server authenticates to Paperless internally using credentials from `config.toml`
+     - Open WebUI does not need to provide additional auth tokens
+   - **Description**: (Optional) "Access Paperless-ngx documents"
+
+4. Click **Save**
+5. Test the connection by asking: "Show me documents in my inbox"
+
+### Common Issues
+
+- **404 errors**: Verify the URL includes `/mcp` at the end
+- **Connection refused**: Ensure the port `:8000` is included and the server is running (`uv run paperless-mcp`)
+- **Authentication errors**: Confirm **Auth** is set to **"None"**, not "Bearer"

@@ -4,7 +4,7 @@ Provides MCP resources, tools, and prompts for interacting with a
 Paperless-ngx document management system via the streamable HTTP transport.
 
 Configuration is loaded from the path specified by the PAPERLESS_MCP_CONFIG
-environment variable, defaulting to ~/.config/paperless-mcp/config.toml.
+environment variable, defaulting to ~/.config/mcp-paperless-ngx/config.toml.
 
 Example config.toml:
     [paperless]
@@ -27,7 +27,7 @@ from mcp.server.fastmcp import FastMCP
 # Constants
 # ---------------------------------------------------------------------------
 
-_DEFAULT_CONFIG_PATH = Path.home() / ".config" / "paperless-mcp" / "config.toml"
+_DEFAULT_CONFIG_PATH = Path.home() / ".config" / "mcp-paperless-ngx" / "config.toml"
 CONFIG_PATH = Path(os.environ.get("PAPERLESS_MCP_CONFIG", _DEFAULT_CONFIG_PATH))
 OPENAPI_PATH = Path(__file__).parent / "doc" / "openapi.json"
 
@@ -119,7 +119,7 @@ async def _post(
 config = load_config()
 
 mcp = FastMCP(
-    name="paperless-mcp",
+    name="mcp-paperless-ngx",
     instructions=(
         "MCP server for Paperless-ngx document management. "
         "Use read-only tools to inspect documents, tags, correspondents, document types, "

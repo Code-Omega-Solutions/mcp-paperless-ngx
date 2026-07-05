@@ -339,7 +339,7 @@ wheels = [
 ]
 
 [[package]]
-name = "paperless-mcp"
+name = "mcp-paperless-ngx"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

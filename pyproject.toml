@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [project.scripts]
-paperless-mcp = "main:main"
+mcp-paperless-ngx = "main:main"
 
 [tool.uv]
 package = true

@@ -1,4 +1,4 @@
-# paperless-mcp — docker-compose.yml
+# mcp-paperless-ngx — docker-compose.yml
 #
 # Usage:
 #   1. Create a ./config/config.toml (see README for format).

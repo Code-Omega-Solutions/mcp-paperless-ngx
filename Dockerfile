@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 # Paperless-ngx MCP Server — Docker image
 #
-# Build:  docker build -t paperless-mcp .
-# Run:    docker run -p 8000:8000 -v ./config:/config paperless-mcp
+# Build:  docker build -t mcp-paperless-ngx .
+# Run:    docker run -p 8000:8000 -v ./config:/config mcp-paperless-ngx
 #
 # The container reads its configuration from /config/config.toml.
 # Mount a directory containing config.toml at /config, or override the path
@@ -53,5 +53,5 @@ ENV PAPERLESS_MCP_CONFIG=/config/config.toml
 EXPOSE 8000
 
 # uv run activates the project virtual environment and executes the entry point
-# defined in pyproject.toml: [project.scripts] paperless-mcp = "main:main"
-CMD ["uv", "run", "paperless-mcp"]
+# defined in pyproject.toml: [project.scripts] mcp-paperless-ngx = "main:main"
+CMD ["uv", "run", "mcp-paperless-ngx"]

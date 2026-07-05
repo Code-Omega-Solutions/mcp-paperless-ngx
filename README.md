@@ -1,4 +1,4 @@
-# paperless-mcp
+# mcp-paperless-ngx
 
 MCP server for [Paperless-ngx](https://docs.paperless-ngx.com/) using the **streamable HTTP** transport protocol.
 
@@ -38,7 +38,7 @@ MCP server for [Paperless-ngx](https://docs.paperless-ngx.com/) using the **stre
 
 ## Configuration
 
-Create `~/.config/paperless-mcp/config.toml`:
+Create `~/.config/mcp-paperless-ngx/config.toml`:
 
 ```toml
 [paperless]
@@ -56,7 +56,7 @@ Override the config path with the `PAPERLESS_MCP_CONFIG` environment variable.
 uv sync
 
 # Start the server (listens on 0.0.0.0:8000/mcp)
-uv run paperless-mcp
+uv run mcp-paperless-ngx
 ```
 
 The MCP endpoint is available at `http://localhost:8000/mcp` (streamable HTTP).
@@ -68,10 +68,10 @@ The MCP endpoint is available at `http://localhost:8000/mcp` (streamable HTTP).
 ```bash
 # Pull and run (replace values in the environment or mount a config file)
 docker run -d \
-  --name paperless-mcp \
+  --name mcp-paperless-ngx \
   -p 8000:8000 \
   -v ./config:/config:ro \
-  ghcr.io/pgfeller/paperless-mcp:latest
+  ghcr.io/Code-Omega-Solutions/mcp-paperless-ngx:latest
 ```
 
 Create `./config/config.toml` before starting (see [Configuration](#configuration) above).
@@ -102,8 +102,8 @@ port 8000.
 ### Building locally
 
 ```bash
-docker build -t paperless-mcp .
-docker run -d -p 8000:8000 -v ./config:/config:ro paperless-mcp
+docker build -t mcp-paperless-ngx .
+docker run -d -p 8000:8000 -v ./config:/config:ro mcp-paperless-ngx
 ```
 
 ### Published image
@@ -111,7 +111,7 @@ docker run -d -p 8000:8000 -v ./config:/config:ro paperless-mcp
 Pre-built images for `linux/amd64` and `linux/arm64` are available at:
 
 ```
-ghcr.io/pgfeller/paperless-mcp:latest
+ghcr.io/Code-Omega-Solutions/mcp-paperless-ngx:latest
 ```
 
 Tags follow [Semantic Versioning](https://semver.org/) — `v1.2.3`, `1.2`, `latest`.
@@ -138,7 +138,7 @@ To use this MCP server with Open WebUI:
    - **Name**: Paperless Assistant (or your preferred name)
    - **Type**: MCP
    - **URL**: `http://host.docker.internal:8000/mcp`
-     - If Open WebUI runs in Docker on the same host as paperless-mcp, use `host.docker.internal`
+     - If Open WebUI runs in Docker on the same host as mcp-paperless-ngx, use `host.docker.internal`
      - If running on different hosts, replace with the actual hostname/IP
      - **Critical**: The port (`:8000`) and `/mcp` path are required
    - **Auth**: **None** ⚠️
@@ -152,5 +152,5 @@ To use this MCP server with Open WebUI:
 ### Common Issues
 
 - **404 errors**: Verify the URL includes `/mcp` at the end
-- **Connection refused**: Ensure the port `:8000` is included and the server is running (`uv run paperless-mcp`)
+- **Connection refused**: Ensure the port `:8000` is included and the server is running (`uv run mcp-paperless-ngx`)
 - **Authentication errors**: Confirm **Auth** is set to **"None"**, not "Bearer"

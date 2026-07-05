@@ -10,6 +10,8 @@
 
 FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim AS base
 
+LABEL org.opencontainers.image.description DESCRIPTION="Paperless-ngx MCP Server"
+
 # ── Build stage: install dependencies ────────────────────────────────────────
 FROM base AS builder
 
